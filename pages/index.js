@@ -22,7 +22,7 @@ export default function Chat() {
     if (message === "Hello") {
       botResponse = "Good Morning";
     } else {
-      botResponse = "ไม่เข้าใจคำถาม";
+      botResponse = "ไม่เข้าใจคำถามค่ะ";
     }
 
     const userMessage = { content: message, isUser: true };
