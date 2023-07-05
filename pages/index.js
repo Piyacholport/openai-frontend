@@ -14,6 +14,10 @@ export default function Chat() {
     setMessage(event.target.value);
   };
 
+  const handleClearChat = () => {
+    setMessages([]);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const message = event.target.message.value;
@@ -48,7 +52,7 @@ export default function Chat() {
         {/* start : content */}
         <div className="text-right mr-5 mt-20 ">
           <div>
-            <label htmlFor="" className="btn">
+            <label htmlFor="" className="btn" onClick={handleClearChat}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -126,7 +130,39 @@ export default function Chat() {
       </div> */}
         {/* start : chat */}
         <div className="mt-5 pb-20 overflow-y-auto h-[520px] ">
-          {messages.map((msg, index) => (
+        {messages.length === 0 ? (
+          <Title/>
+        ) : (
+          messages.map((msg, index) => (
+            <p key={index} className={msg.isUser ? 'user' : 'bot'}>
+              {msg.isUser ? (
+                <div className="chat chat-end">
+                  <div className="chat-bubble bg-[#D3D3D3] text-gray-700 shadow-md">
+                    <p className="user">
+                      <span className="user-message">{msg.content}</span>
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="chat-bubble bg-[#ffffff] text-gray-700 shadow-md">
+                    <p className="bot">
+                      <span className="bot-message">Bot: {msg.content}</span>
+                    </p>
+
+                    <div className="">
+                      <button className="mt-2 mb-3 bg-sky-500 text-white py-2 px-4 rounded">
+                        retry
+                      </button>
+                      <button className="mt-2 mb-3 ml-3 bg-sky-500 text-white py-2 px-4 rounded">
+                        more..
+                      </button>
+                    </div>
+                  </div>
+              )}
+            </p>
+          ))
+        )}
+          {/* {messages.map((msg, index) => (
             <React.Fragment key={index}>
               {msg.isUser ? (
                 <div className="chat chat-end">
@@ -155,7 +191,7 @@ export default function Chat() {
                 </div>
               )}
             </React.Fragment>
-          ))}
+          ))} */}
         </div>
         {/* end : chat */}
 
