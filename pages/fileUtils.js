@@ -1,4 +1,3 @@
-// fileUtils.js
 import mime from 'mime';
 
 export function checkFileType(file) {

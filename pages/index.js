@@ -3,12 +3,14 @@ import Image from "next/image";
 import Link from "next/Link";
 import Navbar from "../components/navbar";
 import Title from "../components/title";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "../styles/Home.module.css";
 import MyComponent from "./Mycomponent";
+import io from "socket.io-client";
 
 export default function Chat() {
   const [messages, setMessages] = useState([]);
+  const socket = io("http://localhost:3000");
 
   const handleInputChange = (event) => {
     setMessage(event.target.value);
@@ -22,21 +24,32 @@ export default function Chat() {
     event.preventDefault();
     const message = event.target.message.value;
 
+    // socket.emit("userMessage", message);
+
     let botResponse = "";
-    if (message === "Hello") {
+    if (message === "Hello" || message === "สวัสดี") {
       botResponse = "Good Morning";
     } else {
       botResponse = "ไม่เข้าใจคำถาม";
     }
 
-    const userMessage = { content: message, isUser: true };
-    const botMessage = { content: botResponse, isUser: false };
+    const usermessage = { content: message, isUser: true };
+    const botmessage = { content: botResponse, isUser: false };
 
-    setMessages((prevMessages) => [...prevMessages, userMessage, botMessage]);
-
+    console.log("usermessage:", message,"botmessage:",botResponse)
+    
+    setMessages((prevMessages) => [...prevMessages, usermessage, botmessage]);
     event.target.reset();
   };
-
+  useEffect(() => {
+    socket.on("botMessage", (message) => {
+      const botmessage = { content: message, isUser: false };
+      setMessages((prevMessages) => [...prevMessages, botmessage]);
+    });
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
   return (
     <div className="">
       <Head>
@@ -113,85 +126,42 @@ export default function Chat() {
             {/* end : Modal */}
           </div>
         </div>
-        {/* <div>
-        {messages.map((msg, index) => (
-          <React.Fragment key={index}>
-            {msg.isUser ? (
-              <p className="user">
-                <span className="user-message">User: {msg.content}</span>
-              </p>
-            ) : (
-              <p className="bot">
-                <span className="bot-message">Bot: {msg.content}</span>
-              </p>
-            )}
-          </React.Fragment>
-        ))}
-      </div> */}
+
         {/* start : chat */}
         <div className="mt-5 pb-20 overflow-y-auto h-[520px] ">
-        {messages.length === 0 ? (
-          <Title/>
-        ) : (
-          messages.map((msg, index) => (
-            <p key={index} className={msg.isUser ? 'user' : 'bot'}>
-              {msg.isUser ? (
-                <div className="chat chat-end">
-                  <div className="chat-bubble bg-[#D3D3D3] text-gray-700 shadow-md">
-                    <p className="user">
-                      <span className="user-message">{msg.content}</span>
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="chat-bubble bg-[#ffffff] text-gray-700 shadow-md">
-                    <p className="bot">
-                      <span className="bot-message">Bot: {msg.content}</span>
-                    </p>
-
-                    <div className="">
-                      <button className="mt-2 mb-3 bg-sky-500 text-white py-2 px-4 rounded">
-                        retry
-                      </button>
-                      <button className="mt-2 mb-3 ml-3 bg-sky-500 text-white py-2 px-4 rounded">
-                        more..
-                      </button>
+          {messages.length === 0 ? (
+            <Title />
+          ) : (
+            messages.map((msg, index) => (
+              <div key={index} className={msg.isUser ? "user" : "bot"}>
+                {msg.isUser ? (
+                  <div className="chat chat-end">
+                    <div className="chat-bubble bg-[#D3D3D3] text-gray-700 shadow-md">
+                      <p className="user">
+                        <span className="user-message">{msg.content}</span>
+                      </p>
                     </div>
                   </div>
-              )}
-            </p>
-          ))
-        )}
-          {/* {messages.map((msg, index) => (
-            <React.Fragment key={index}>
-              {msg.isUser ? (
-                <div className="chat chat-end">
-                  <div className="chat-bubble bg-[#D3D3D3] text-gray-700 shadow-md">
-                    <p className="user">
-                      <span className="user-message">{msg.content}</span>
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="chat chat-start">
-                  <div className="chat-bubble bg-[#ffffff] text-gray-700 shadow-md">
-                    <p className="bot">
-                      <span className="bot-message">Bot: {msg.content}</span>
-                    </p>
-
-                    <div className="">
-                      <button className="mt-2 mb-3 bg-sky-500 text-white py-2 px-4 rounded">
-                        retry
-                      </button>
-                      <button className="mt-2 mb-3 ml-3 bg-sky-500 text-white py-2 px-4 rounded">
-                        more..
-                      </button>
+                ) : (
+                  <div className="chat chat-start">
+                    <div className="chat-bubble bg-[#ffffff] text-gray-700 shadow-md">
+                      <p className="bot">
+                        <span className="bot-message">Bot: {msg.content}</span>
+                      </p>
+                      <div className="">
+                        <button className="mt-3 mb-3 bg-sky-500 text-white py-2 px-4 rounded">
+                          retry
+                        </button>
+                        <button className="mt-3 mb-3 ml-3 bg-sky-500 text-white py-2 px-4 rounded">
+                          more..
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </React.Fragment>
-          ))} */}
+                )}
+              </div>
+            ))
+          )}
         </div>
         {/* end : chat */}
 
@@ -212,7 +182,7 @@ export default function Chat() {
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  class="w-6 h-6"
+                  className="w-6 h-6"
                 >
                   <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
                 </svg>
