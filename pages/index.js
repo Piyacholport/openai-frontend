@@ -1,24 +1,25 @@
 import Head from "next/head";
 import Image from "next/image";
-import Link from "next/Link";
 import Navbar from "../components/navbar";
 import Title from "../components/title";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import MyComponent from "./Mycomponent";
 import io from "socket.io-client";
 import { useSelector, useDispatch } from "react-redux";
-
+import { setMessages, setMessage, setAnswer } from "../store/chatReducer";
+import useRouter from "next/router";
+const router = useRouter;
 const socket = io("http://localhost:3000");
 
 export default function Chat() {
-  const messages = useSelector((state) => state.messages);
-  const message = useSelector((state) => state.message);
-  const answer = useSelector((state) => state.answer);
+  const messages = useSelector((state) => state.chat.messages);
+  const message = useSelector((state) => state.chat.message);
+  const answer = useSelector((state) => state.chat.answer);
   const dispatch = useDispatch();
 
   useEffect(() => {
     socket.on("answer message", (answer) => {
-      dispatch({ type: "SET_ANSWER", payload: answer });
+      dispatch(setAnswer(answer));
     });
 
     socket.on("connect", () => {
@@ -34,7 +35,7 @@ export default function Chat() {
   }, []);
 
   const handleClearChat = () => {
-    dispatch({ type: "SET_MESSAGES", payload: [] });
+    dispatch(setMessages([]));
   };
 
   const handleSubmit = (event) => {
@@ -53,13 +54,13 @@ export default function Chat() {
 
     console.log("user:", message, "\nbot:", botResponse);
     socket.emit("chat message", message);
-    dispatch({
-      type: "SET_MESSAGES",
-      payload: [...messages, usermessage, botmessage],
-    });
-    dispatch({ type: "SET_MESSAGE", payload: "" });
-
+    dispatch(setMessages([...messages, usermessage, botmessage]));
+    dispatch(setMessage(""));
+    console.log(messages);
     event.target.reset();
+  };
+  const handleredirect = () => {
+    router.push("/file");
   };
 
   return (
@@ -87,7 +88,8 @@ export default function Chat() {
               clear chat
             </label>
 
-            <label htmlFor="my_modal_6" className="btn">
+            {/* <label htmlFor="my_modal_6" className="btn"> */}
+            <div onClick={handleredirect} className="btn">
               <span>
                 <Image
                   src="./icon/upload.svg"
@@ -97,7 +99,7 @@ export default function Chat() {
                 />
               </span>
               upload file
-            </label>
+            </div>
 
             <input type="checkbox" id="my_modal_6" className="modal-toggle" />
             <div className="modal">

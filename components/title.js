@@ -4,12 +4,13 @@ export default function Title() {
   return (
     <main className={styles.main}>
       <div>
-        <span>
+        <span >
           <Image
-            src="./icon/sparkles.svg"
+            src="..//icon/sparkles.svg"
             alt="sparkles"
             width={100}
             height={100}
+            
           />
         </span>
       </div>

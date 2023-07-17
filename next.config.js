@@ -2,7 +2,9 @@
 const withLess = require('next-with-less')
 const withImages = require('next-images');
 
+
 const nextConfig = withLess({
+
   reactStrictMode: true,
   poweredByHeader: false,
   productionBrowserSourceMaps: false,
@@ -10,12 +12,15 @@ const nextConfig = withLess({
     maxInactiveAge: 25 * 1000,
     pagesBufferLength: 2,
   },
+  eslint: { ignoreDuringBuilds: process.env.NEXT_PUBLIC_ENV !== 'production' },
   rewrites: async () => {
     
+    if (process.env.NEXT_PUBLIC_ENV !== 'local') return []
     return [
       {
         source: '/api/:slug*',
-        destination: `https://27b6-2001-44c8-4710-635d-5c94-9708-97c7-4221.ngrok-free.app/api/:slug*`,
+        destination: `${process.env.NEXT_PUBLIC_BASE_API}/api/:slug*`,
+        basePath: false,
       },
     ]
   },
@@ -28,3 +33,9 @@ module.exports = withImages({
   }
 })
 
+module.exports = {
+  webpack: (config) => {
+    config.resolve.modules.push(__dirname + '/store');
+    return config;
+  },
+};

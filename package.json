@@ -1,11 +1,11 @@
 {
   "name": "nextv12",
   "version": "0.1.0",
+ 
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "preview": "set VITE_API_URL=http://localhost:3000 && node server.js",
-    "build": "next build",
+    "dev": "next dev -p 3000",
+    "build": "NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4096 next build",
     "start": "node server.js",
     "lint": "next lint",
     "server": "npm run build && npm run start"
@@ -14,6 +14,7 @@
     "@reduxjs/toolkit": "^1.9.5",
     "axios": "^1.4.0",
     "browser-image-compression": "^2.0.2",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "formidable": "^3.5.0",
     "http-proxy-middleware": "^2.0.6",
