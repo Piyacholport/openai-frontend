@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setfiles } from "../store/fileReducer";
+import { setfiles, setfileupload } from "../store/fileReducer";
 import Nofile from "../components/nofile";
 import Navbar from "../components/navbar";
 import Image from "next/image";
@@ -8,27 +8,26 @@ import useRouter from "next/router";
 const router = useRouter;
 
 const FileComponent = () => {
-  const [uploadedFiles, setUploadedFiles] = useState([]);
   const files = useSelector((state) => state.file.files);
+  const fileupload = useSelector((state) => state.file.fileupload);
   const dispatch = useDispatch();
 
   const handleFileUpload = (event) => {
     const filesToUpload = Array.from(event.target.files);
-    setUploadedFiles(filesToUpload);
+    dispatch(setfileupload(filesToUpload));
   };
   const handleredirect = () => {
     router.push("/");
   };
 
   const handleSubmit = () => {
-    const validFiles = uploadedFiles.filter(checkFileType);
+    const validFiles = fileupload.filter(checkFileType);
     if (validFiles.length === 0) {
       alert("กรุณาเลือกไฟล์ที่มีประเภทเป็น PDF, DOCX, หรือ HTML");
       return;
     }
     dispatch(setfiles([...files, ...validFiles]));
-    setUploadedFiles([]);
-   
+    dispatch(setfileupload([]));
   };
   const checkFileType = (file) => {
     const allowedTypes = [

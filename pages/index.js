@@ -86,8 +86,6 @@ export default function Chat() {
               </span>
               clear chat
             </label>
-
-            {/* <label htmlFor="my_modal_6" className="btn"> */}
             <div onClick={handleredirect} className="btn">
               <span>
                 <Image
