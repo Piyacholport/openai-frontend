@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+require('dotenv').config();
 const withLess = require('next-with-less')
 const withImages = require('next-images');
 
@@ -39,3 +40,10 @@ module.exports = {
     return config;
   },
 };
+
+module.exports = {
+  env: {
+    appName: process.env.NEXT_PUBLIC_ENV,
+    appUrl: process.env.NEXT_PUBLIC_APP_PORT,
+  },
+}

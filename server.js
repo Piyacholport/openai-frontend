@@ -1,58 +1,19 @@
 // const store = require("./store/store");
-// const express = require("express");
-// const http = require("http");
-// const socketIO = require("socket.io");
-// const next = require('next')
-
-// const exp = express();
-// const server = http.createServer(exp);
-// const io = socketIO(server);
-
-// const { loadEnvConfig } = require('@next/env')
-// loadEnvConfig('./', process.env.NODE_ENV !== 'production')
-// const ENV = process.env
-// const app = next({ dev: ENV.NEXT_PUBLIC_ENV === 'local', port: ENV.NEXT_PUBLIC_APP_PORT || 3000 })
-
-
-// const getAnswer = () => {
-//   const state = store.getState();
-//   return state.answer;
-// };
-// io.on("connection", (socket) => {
-//   console.log("A user connected");
-
-//   socket.on("disconnect", () => {
-//     console.log("A user disconnected");
-//   });
-
-//   socket.on("chat message", (message) => {
-//     console.log("Received message:", message);
-//     if (message) {
-//       const answer = getAnswer();
-//       socket.emit("answer message", answer);
-//     } 
-//   });
-// });
-
-// const port = ENV.NEXT_PUBLIC_APP_PORT || 3000;
-// server.listen(port, () => {
-//   console.log(`Server is running on port ${port}`);
-// });
-const store = require("./store/store"); 
-
 const express = require("express");
 const http = require("http");
 const socketIO = require("socket.io");
-const next = require('next')
+const next = require("next");
+const httpProxy = require("http-proxy");
+require('dotenv').config();
 
-const exp = express();
-const server = http.createServer(exp);
+const app = express();
+const server = http.createServer(app);
 const io = socketIO(server);
 
-const getAnswer = () => {
-  const state = store.getState();
-  return state.chat.answer;
-};
+// const getAnswer = () => {
+//   const state = store.getState();
+//   return state.chat.answer;
+// };
 
 io.on("connection", (socket) => {
   console.log("A user connected");
@@ -64,13 +25,28 @@ io.on("connection", (socket) => {
   socket.on("chat message", (message) => {
     console.log("Received message:", message);
     if (message) {
-      const answer = getAnswer();
-      socket.emit("answer message", answer);
+      //   const answer = getAnswer();
+      //   socket.emit("answer message", answer);
+      console.log("Message is : ", message);
     }
   });
 });
 
-const port = 3000;
+const proxy = httpProxy.createProxyServer();
+
+app.use((req, res, next) => {
+  console.log("Received request:", req.method, req.url);
+  proxy.web(req, res, { target: "http://localhost:3000" }, (error) => {
+    console.log("Error:", error);
+    res.status(500).send("Internal Server Error");
+  });
+});
+
+proxy.on("error", (error) => {
+  console.log("Proxy Error:", error);
+});
+
+const port = process.env.NEXT_PUBLIC_APP_PORT;
 server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

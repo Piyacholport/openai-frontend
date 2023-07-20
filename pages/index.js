@@ -3,7 +3,6 @@ import Image from "next/image";
 import Navbar from "../components/navbar";
 import Title from "../components/title";
 import React, { useEffect } from "react";
-import MyComponent from "./Mycomponent";
 import io from "socket.io-client";
 import { useSelector, useDispatch } from "react-redux";
 import { setMessages, setMessage, setAnswer } from "../store/chatReducer";
@@ -101,36 +100,8 @@ export default function Chat() {
               upload file
             </div>
 
-            <input type="checkbox" id="my_modal_6" className="modal-toggle" />
-            <div className="modal">
-              <div className="modal-box">
-                <h3 className="font-bold text-lg text-left">
-                  Please Select File
-                </h3>
-                <div className="py-4 text-center">
-                  <MyComponent />
-                </div>
-                <div className="text-center">
-                  <button className="btn">
-                    <span>
-                      <Image
-                        src="./icon/upload.svg"
-                        alt="upload"
-                        width={20}
-                        height={20}
-                      />
-                    </span>
-                    upload file
-                  </button>
-                </div>
-
-                <div className="modal-action">
-                  <label htmlFor="my_modal_6" className="btn">
-                    Close
-                  </label>
-                </div>
-              </div>
-            </div>
+           
+        
           </div>
         </div>
 

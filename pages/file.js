@@ -28,6 +28,7 @@ const FileComponent = () => {
     }
     dispatch(setfiles([...files, ...validFiles]));
     setUploadedFiles([]);
+   
   };
   const checkFileType = (file) => {
     const allowedTypes = [
