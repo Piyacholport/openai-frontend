@@ -32,7 +32,6 @@ const FileComponent = () => {
   const handleFileUpload = (event) => {
     const filesToUpload = Array.from(event.target.files);
     dispatch(setfileupload(filesToUpload));
-    setIsOpenSuccess(true)
   };
 
   const acceptFileTypes = [
@@ -74,7 +73,7 @@ const FileComponent = () => {
         <Navbar />
         <div className="text-right mr-5 mt-20 ">
           <div>
-            <div onClick={handleredirect} className="btn">
+            <div onClick={handleredirect} className="btn bg-gray-100 hover:bg-gary-200">
               <span>
                 <Image
                   src="./icon/chatbubble.svg"
@@ -91,12 +90,12 @@ const FileComponent = () => {
         <div className="mt-10 pb-20">
           <div className="flex flex-col items-center sm:flex-row px-5">
             <div className="mr-auto">
-              <div className="text-2xl text-center font-bold">upload Files</div>
+              <div className="text-2xl text-center font-bold text-black">upload Files</div>
             </div>
             <div className="flex justify-between mt-5">
               <input
                 type="file"
-                className="file-input file-input-bordered w-full max-w-xs"
+                className="file-input file-input-bordered w-full max-w-xs bg-white"
                 multiple
                 onChange={handleFileUpload}
                 accept=".pdf,.doc,.docx,.html,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/html"
@@ -112,8 +111,8 @@ const FileComponent = () => {
               <table className="table rounded-md">
                 <thead className="bg-gray-200 font-bold  ">
                   <tr>
-                    <th className="text-base">Name</th>
-                    <th className="text-center text-base">Size</th>
+                    <th className="text-base text-gray-500">Name</th>
+                    <th className="text-center text-base text-gray-500">Size</th>
                   </tr>
                 </thead>
 
@@ -123,8 +122,8 @@ const FileComponent = () => {
                   ) : (
                     files.map((file, index) => (
                       <tr key={index}>
-                        <td>{file.name}</td>
-                        <td className="text-center">{file.size} bytes</td>
+                        <td className="text-black">{file.name}</td>
+                        <td className="text-center text-black">{file.size} bytes</td>
                       </tr>
                     ))
                   )}

@@ -14,22 +14,22 @@ export default function Title() {
           />
         </span>
       </div>
-      <p className="text-5xl font-bold mb-10">Chat with your data</p>
-      <p className="font-bold">asking anything or try an example</p>
+      <p className="text-5xl font-bold mb-10 text-black">Chat with your data</p>
+      <p className="font-bold text-black">asking anything or try an example</p>
       <div className={styles.grid}>
         <a href="" className={styles.card}>
-          <p>
+          <p className="text-black">
             What is included in my Northwind Health Plus plan that is not in
             standard?
           </p>
         </a>
 
         <a href="" className={styles.card}>
-          <p>What happens in a performance review?</p>
+          <p className="text-black">What happens in a performance review?</p>
         </a>
 
         <a href="" className={styles.card}>
-          <p>What does a Product Manager do?</p>
+          <p className="text-black">What does a Product Manager do?</p>
         </a>
       </div>
     </main>

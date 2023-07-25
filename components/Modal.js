@@ -23,7 +23,7 @@ const Modalalert = () => {
         onRequestClose={() => setIsOpen(false)}
         style={customStyles}
       >
-        <h1>Modal Content</h1>
+        <h1 className="text-black">Modal Content</h1>
         <button onClick={() => setIsOpen(false)}>Close Modal</button>
       </Modal>
     </div>

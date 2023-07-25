@@ -59,7 +59,7 @@ export default function Chat() {
 
         <div className="text-right mr-5 mt-20 ">
           <div>
-            <label htmlFor="" className="btn" onClick={handleClearChat}>
+            <label htmlFor="" className="btn bg-gray-100 " onClick={handleClearChat}>
               <span>
                 <Image
                   src="./icon/trash.svg"
@@ -68,9 +68,10 @@ export default function Chat() {
                   height={20}
                 />
               </span>
-              clear chat
+              <span className="text-black">clear chat</span>
+              
             </label>
-            <div onClick={handleredirect} className="btn">
+            <div onClick={handleredirect} className="btn bg-gray-100 ">
               <span>
                 <Image
                   src="./icon/upload.svg"
@@ -79,7 +80,8 @@ export default function Chat() {
                   height={20}
                 />
               </span>
-              upload file
+              <span className="text-black">upload file</span>
+              
             </div>
 
            

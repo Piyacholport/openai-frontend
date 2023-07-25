@@ -28,14 +28,3 @@ a {
     background: black;
   }
 }
-:root {
-  --primary-color: #0070f3;
-  --secondary-color: #ff0080;
-  --background-color: #f3f3f3;
-  --text-color: #000000;
-
-  --primary-color-dark: #00adb5;
-  --secondary-color-dark: #ff80ab;
-  --background-color-dark: #121212;
-  --text-color-dark: #ffffff;
-}
