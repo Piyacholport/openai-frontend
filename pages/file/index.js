@@ -1,10 +1,12 @@
-import React from "react";
+import React ,{useState}from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setfiles, setfileupload } from "../store/fileReducer";
-import Nofile from "../components/nofile";
-import Navbar from "../components/navbar";
+import { setfiles, setfileupload } from "../../store/fileReducer";
+import Modal from "react-modal";
+import Nofile from "../../components/nofile";
+import Navbar from "../../components/navbar";
 import Image from "next/image";
 import useRouter from "next/router";
+
 const router = useRouter;
 
 const FileComponent = () => {
@@ -12,10 +14,37 @@ const FileComponent = () => {
   const fileupload = useSelector((state) => state.file.fileupload);
   const dispatch = useDispatch();
 
+  const [isOpen, setIsOpen] = useState(false);
+  const customStyles = {
+    overlay: {
+      backgroundColor: "rgba(0, 0, 0, 0.6)",
+    },
+    content: {
+      top: "50%",
+      left: "50%",
+      right: "auto",
+      bottom: "auto",
+      marginRight: "-50%",
+      transform: "translate(-50%, -50%)",
+    },
+  };
+
   const handleFileUpload = (event) => {
     const filesToUpload = Array.from(event.target.files);
     dispatch(setfileupload(filesToUpload));
+    setIsOpenSuccess(true)
   };
+
+  const acceptFileTypes = [
+    ".pdf",
+    ".doc",
+    ".docx",
+    ".html",
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "text/html",
+  ];
+
   const handleredirect = () => {
     router.push("/");
   };
@@ -23,19 +52,20 @@ const FileComponent = () => {
   const handleSubmit = () => {
     const validFiles = fileupload.filter(checkFileType);
     if (validFiles.length === 0) {
-      alert("กรุณาเลือกไฟล์ที่มีประเภทเป็น PDF, DOCX, หรือ HTML");
+      setIsOpen(true)
       return;
     }
     dispatch(setfiles([...files, ...validFiles]));
     dispatch(setfileupload([]));
   };
   const checkFileType = (file) => {
-    const allowedTypes = [
-      "application/pdf",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "text/html",
-    ];
-    return allowedTypes.includes(file.type);
+    return acceptFileTypes.some((type) => {
+      return (
+        file.type === type ||
+        file.name.toLowerCase().endsWith(type) ||
+        file.name.toLowerCase().includes(type)
+      );
+    });
   };
 
   return (
@@ -59,16 +89,17 @@ const FileComponent = () => {
         </div>
 
         <div className="mt-10 pb-20">
-          <div class="flex flex-col items-center sm:flex-row px-5">
-            <div class="mr-auto">
+          <div className="flex flex-col items-center sm:flex-row px-5">
+            <div className="mr-auto">
               <div className="text-2xl text-center font-bold">upload Files</div>
             </div>
-            <div class="flex justify-between mt-5">
+            <div className="flex justify-between mt-5">
               <input
                 type="file"
                 className="file-input file-input-bordered w-full max-w-xs"
                 multiple
                 onChange={handleFileUpload}
+                accept=".pdf,.doc,.docx,.html,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/html"
               />
               <button className="btn btn-neutral ml-3" onClick={handleSubmit}>
                 Submit
@@ -103,6 +134,19 @@ const FileComponent = () => {
           </div>
         </div>
       </main>
+      <div>
+     
+     <Modal
+       isOpen={isOpen}
+       onRequestClose={() => setIsOpen(false)}
+       style={customStyles}
+     >
+       <h1>กรุณาเลือกไฟล์ใหม่ที่มีประเภทเป็น PDF, DOCX, หรือ HTML</h1>
+       <button onClick={() => setIsOpen(false)} className="btn flex justify-center">ok</button>
+     </Modal>
+
+
+   </div>
     </div>
   );
 };

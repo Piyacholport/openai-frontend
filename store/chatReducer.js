@@ -5,7 +5,7 @@ const chatSlice = createSlice({
     messages: [],
     message: '',
     answer: 'Hello User, How are You?',
-    count: 0,
+
   },
   reducers: {
     setMessages: (state, action) => {
@@ -16,9 +16,6 @@ const chatSlice = createSlice({
     },
     setAnswer: (state, action) => {
       state.answer = action.payload;
-    },
-    setCount: (state, action) => {
-      state.count = action.payload;
     },
   },
 });

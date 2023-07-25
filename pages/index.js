@@ -3,12 +3,12 @@ import Image from "next/image";
 import Navbar from "../components/navbar";
 import Title from "../components/title";
 import React, { useEffect } from "react";
-import io from "socket.io-client";
+
 import { useSelector, useDispatch } from "react-redux";
 import { setMessages, setMessage, setAnswer } from "../store/chatReducer";
 import useRouter from "next/router";
 const router = useRouter;
-const socket = io("http://localhost:3000");
+
 
 export default function Chat() {
   const messages = useSelector((state) => state.chat.messages);
@@ -16,22 +16,6 @@ export default function Chat() {
   const answer = useSelector((state) => state.chat.answer);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    socket.on("answer message", (answer) => {
-      dispatch(setAnswer(answer));
-    });
-
-    socket.on("connect", () => {
-      console.log("Connected to the server");
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Disconnected from the server");
-    });
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
 
   const handleClearChat = () => {
     dispatch(setMessages([]));
@@ -52,7 +36,7 @@ export default function Chat() {
     const botmessage = { content: botResponse, isUser: false };
 
     console.log("user:", message, "\nbot:", botResponse);
-    socket.emit("chat message", message);
+    
     dispatch(setMessages([...messages, usermessage, botmessage]));
     dispatch(setMessage(""));
     console.log(messages);
@@ -141,7 +125,7 @@ export default function Chat() {
 
         <div className="btm-nav">
           <form onSubmit={handleSubmit}>
-            <div className="flex w-96 h-full">
+            <div className="flex w-full h-full md:pl-48 md:pr-48 sm:pl-20 sm:pr-20 ">
               <input
                 type="text"
                 name="message"

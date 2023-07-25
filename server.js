@@ -1,50 +1,60 @@
-// const store = require("./store/store");
 const express = require("express");
 const http = require("http");
-const socketIO = require("socket.io");
-const next = require("next");
-const httpProxy = require("http-proxy");
-require('dotenv').config();
-
+const { createProxyMiddleware } = require("http-proxy-middleware");
+require("dotenv").config();
 const app = express();
 const server = http.createServer(app);
-const io = socketIO(server);
+const PATH_PREFIX = "/api";
+const BASE_API = process.env.NEXT_PUBLIC_APP_PORT;
 
-// const getAnswer = () => {
-//   const state = store.getState();
-//   return state.chat.answer;
-// };
+app.use(express.json({ limit: "20mb" }));
+app.use(express.urlencoded({ extended: true, limit: "20mb" }));
+const proxyOptions = {
+  target: BASE_API,
+  pathRewrite: {
+    [`^${PATH_PREFIX}`]: "",
+  },
+  secure: false,
+  changeOrigin: true,
+  onProxyReq: fixRequestBody,
+  logRequest,
+  onProxyRes: (proxyRes, req, res) => {
+    const ORIGIN = req.headers.origin || "*";
+    proxyRes.headers["access-control-allow-origin"] = ORIGIN;
+  },
+};
 
-io.on("connection", (socket) => {
-  console.log("A user connected");
-
-  socket.on("disconnect", () => {
-    console.log("A user disconnected");
-  });
-
-  socket.on("chat message", (message) => {
-    console.log("Received message:", message);
-    if (message) {
-      //   const answer = getAnswer();
-      //   socket.emit("answer message", answer);
-      console.log("Message is : ", message);
+app.use(createProxyMiddleware(PATH_PREFIX, proxyOptions));
+function fixRequestBody(proxyReq, req) {
+  if (req.body) {
+    const contentType = proxyReq.getHeader("Content-Type");
+    const bodyData = JSON.stringify(req.body);
+    if (contentType && contentType.includes("application/json")) {
+      proxyReq.setHeader("Content-Type", "application/json");
     }
-  });
-});
+    proxyReq.setHeader("Content-Length", Buffer.byteLength(bodyData));
+    proxyReq.write(bodyData);
+  }
+}
 
-const proxy = httpProxy.createProxyServer();
-
-app.use((req, res, next) => {
-  console.log("Received request:", req.method, req.url);
-  proxy.web(req, res, { target: "http://localhost:3000" }, (error) => {
-    console.log("Error:", error);
-    res.status(500).send("Internal Server Error");
-  });
-});
-
-proxy.on("error", (error) => {
-  console.log("Proxy Error:", error);
-});
+function logRequest(req, res) {
+  const isSuccess = res.statusCode < 400;
+  const message = {
+    TIMESTAMP: dayjs().format("YYYY-MM-DD HH:mm:ss.SSS"),
+    REQUEST_ID: req.requestId,
+    REQUEST_METHOD: req.method.toUpperCase(),
+    REQUEST_URI: req.originalUrl || req.url || "-",
+    REQUEST_HEADERS: req.headers,
+    REQUEST_PARAMS: this.manageParams(req),
+    REQUEST_BODY: req.body || {},
+    RESPONSE_STATUS: res.statusCode || "None",
+    RESPONSE_TIME: new Date().getTime() - req.startTime,
+    RESPONSE_DESCRIPTION: isSuccess
+      ? `SUCCESS_WEBHOOK_FE`
+      : `FAILED_WEBHOOK_FE`,
+  };
+  console.log(message);
+}
 
 const port = process.env.NEXT_PUBLIC_APP_PORT;
 server.listen(port, () => {

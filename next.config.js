@@ -13,10 +13,10 @@ const nextConfig = withLess({
     maxInactiveAge: 25 * 1000,
     pagesBufferLength: 2,
   },
-  eslint: { ignoreDuringBuilds: process.env.NEXT_PUBLIC_ENV !== 'production' },
+  eslint: { ignoreDuringBuilds: process.env.NEXT_PUBLIC_APP_PORT !== 'production' },
   rewrites: async () => {
     
-    if (process.env.NEXT_PUBLIC_ENV !== 'local') return []
+    if (process.env.NEXT_PUBLIC_APP_PORT !== 'local') return []
     return [
       {
         source: '/api/:slug*',
@@ -33,13 +33,6 @@ module.exports = withImages({
     return config
   }
 })
-
-module.exports = {
-  webpack: (config) => {
-    config.resolve.modules.push(__dirname + '/store');
-    return config;
-  },
-};
 
 module.exports = {
   env: {
