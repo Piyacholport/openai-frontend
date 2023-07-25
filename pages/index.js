@@ -9,13 +9,11 @@ import { setMessages, setMessage, setAnswer } from "../store/chatReducer";
 import useRouter from "next/router";
 const router = useRouter;
 
-
 export default function Chat() {
   const messages = useSelector((state) => state.chat.messages);
   const message = useSelector((state) => state.chat.message);
   const answer = useSelector((state) => state.chat.answer);
   const dispatch = useDispatch();
-
 
   const handleClearChat = () => {
     dispatch(setMessages([]));
@@ -27,16 +25,38 @@ export default function Chat() {
 
     let botResponse = "";
     if (message === "Hello" || message === "สวัสดี") {
-      botResponse = answer;
+      botResponse = (
+        <div>
+          {answer}
+          <div className="">
+            <button className="mt-3 mb-3 bg-sky-200 text-white py-1 px-4 rounded-full text-red-500">
+             result.pdf
+            </button>
+           
+          </div>
+        </div>
+      );
     } else {
-      botResponse = "ไม่เข้าใจคำถามค่ะ";
+      botResponse = (
+        <div>
+          ไม่เข้าใจคำถามค่ะ
+          <div className="">
+          <button className="mt-3 mb-3 bg-sky-400 text-white py-1 px-4 rounded-full ">
+             retry
+            </button>
+            <button className="mt-3 mb-3 ml-3 bg-sky-400 text-white py-1 px-4 rounded-full ">
+             more
+            </button>
+          </div>
+        </div>
+      );
     }
 
     const usermessage = { content: message, isUser: true };
     const botmessage = { content: botResponse, isUser: false };
 
     console.log("user:", message, "\nbot:", botResponse);
-    
+
     dispatch(setMessages([...messages, usermessage, botmessage]));
     dispatch(setMessage(""));
     console.log(messages);
@@ -54,12 +74,17 @@ export default function Chat() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex min-h-screen flex-col bg-[#f5f5f5] ">
+      <main className="flex min-h-screen flex-col bg-[#f5f5f5] " >
+     
         <Navbar />
 
         <div className="text-right mr-5 mt-20 ">
           <div>
-            <label htmlFor="" className="btn bg-gray-100 " onClick={handleClearChat}>
+            <label
+              htmlFor=""
+              className="btn bg-gray-100 "
+              onClick={handleClearChat}
+            >
               <span>
                 <Image
                   src="./icon/trash.svg"
@@ -69,7 +94,6 @@ export default function Chat() {
                 />
               </span>
               <span className="text-black">clear chat</span>
-              
             </label>
             <div onClick={handleredirect} className="btn bg-gray-100 ">
               <span>
@@ -81,23 +105,25 @@ export default function Chat() {
                 />
               </span>
               <span className="text-black">upload file</span>
-              
             </div>
-
-           
-        
           </div>
         </div>
 
         <div className="mt-5 pb-20 overflow-y-auto h-[520px] ">
           {messages.length === 0 ? (
-            <Title />
+            <Title
+              title="Chat with your data"
+              subtitle="asking anything or try an example"
+              cardfirst="What is included in my Northwind Health Plus plan that is not in standard?"
+              cardsecond="What happens in a performance review?"
+              cardthird="What does a Product Manager do?"
+            />
           ) : (
             messages.map((msg, index) => (
               <div key={index} className={msg.isUser ? "user" : "bot"}>
                 {msg.isUser ? (
                   <div className="chat chat-end">
-                    <div className="chat-bubble bg-[#D3D3D3] text-gray-700 shadow-md">
+                    <div className="chat-bubble bg-[#e8ebfa] text-gray-700 shadow-md">
                       <p className="user">
                         <span className="user-message">{msg.content}</span>
                       </p>
@@ -107,16 +133,8 @@ export default function Chat() {
                   <div className="chat chat-start">
                     <div className="chat-bubble bg-[#ffffff] text-gray-700 shadow-md">
                       <p className="bot">
-                        <span className="bot-message">Bot: {msg.content}</span>
+                        <span className="bot-message">{msg.content}</span>
                       </p>
-                      <div className="">
-                        <button className="mt-3 mb-3 bg-sky-500 text-white py-2 px-4 rounded">
-                          retry
-                        </button>
-                        <button className="mt-3 mb-3 ml-3 bg-sky-500 text-white py-2 px-4 rounded">
-                          more..
-                        </button>
-                      </div>
                     </div>
                   </div>
                 )}
