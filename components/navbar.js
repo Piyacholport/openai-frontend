@@ -1,6 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/Link";
+import img from "../public/icon/bellalert.svg";
 
 export default function Navbar() {
   return (
@@ -27,7 +28,7 @@ export default function Navbar() {
           />
         </div>
         <div className="navbar-end">
-{/*        
+          {/*        
         <p className="text-white">Azure OpenAI + Congntitive Search</p> */}
         </div>
       </div>

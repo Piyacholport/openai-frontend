@@ -1,9 +1,16 @@
-import io from 'socket.io-client';
+import io from "socket.io-client";
 
-const socket = io.connect('https://example.com'); 
+export const ChatController = () => {
+  const socket = io.connect("http://localhost:3000");
 
-const sendMessage = (message) => {
-  socket.emit('chatMessage', message);
+  return {
+    SendChat: async (message) => {
+      return await socket.emit("chat message", message);
+    },
+     GetAns: async (answer) => {
+      return await socket.on("answer message", answer);
+    },  
+
+  
+  };
 };
-
-export default { socket, sendMessage };

@@ -6,21 +6,15 @@ import Title from "../components/title";
 import React, { useState, useEffect } from "react";
 import MyComponent from "./Mycomponent";
 import io from "socket.io-client";
-import { useSelector, useDispatch } from "react-redux";
-
+import styles from "../styles/Home.module.css";
 const socket = io("http://localhost:3000");
 
 export default function Chat() {
-  const messages = useSelector((state) => state.messages);
-  const message = useSelector((state) => state.message);
-  const answer = useSelector((state) => state.answer);
-  const dispatch = useDispatch();
+  const [messages, setMessages] = useState([]);
+  const [message, setMessage] = useState("");
+  const [answer, setAnswer] = useState("");
 
   useEffect(() => {
-    socket.on("answer message", (answer) => {
-      dispatch({ type: "SET_ANSWER", payload: answer });
-    });
-
     socket.on("connect", () => {
       console.log("Connected to the server");
     });
@@ -28,13 +22,17 @@ export default function Chat() {
     socket.on("disconnect", () => {
       console.log("Disconnected from the server");
     });
+
+    socket.on("answer message", (answer) => {
+      setAnswer(answer);
+    });
     return () => {
       socket.disconnect();
     };
   }, []);
 
   const handleClearChat = () => {
-    dispatch({ type: "SET_MESSAGES", payload: [] });
+    setMessages([]);
   };
 
   const handleSubmit = (event) => {
@@ -53,12 +51,8 @@ export default function Chat() {
 
     console.log("user:", message, "\nbot:", botResponse);
     socket.emit("chat message", message);
-    dispatch({
-      type: "SET_MESSAGES",
-      payload: [...messages, usermessage, botmessage],
-    });
-    dispatch({ type: "SET_MESSAGE", payload: "" });
-
+    setMessages((prevMessages) => [...prevMessages, usermessage, botmessage]);
+    console.log("setMessages:", messages);
     event.target.reset();
   };
 
