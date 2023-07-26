@@ -1,55 +1,71 @@
 import Head from "next/head";
 import Image from "next/image";
-import Link from "next/Link";
 import Navbar from "../components/navbar";
 import Title from "../components/title";
-import React, { useState, useEffect } from "react";
-import styles from "../styles/Home.module.css";
-import MyComponent from "./Mycomponent";
-import io from "socket.io-client";
+import React, { useEffect } from "react";
+
+import { useSelector, useDispatch } from "react-redux";
+import { setMessages, setMessage, setAnswer } from "../store/chatReducer";
+import useRouter from "next/router";
+const router = useRouter;
 
 export default function Chat() {
-  const [messages, setMessages] = useState([]);
-  const socket = io("http://localhost:3000");
-
-  const handleInputChange = (event) => {
-    setMessage(event.target.value);
-  };
+  const messages = useSelector((state) => state.chat.messages);
+  const message = useSelector((state) => state.chat.message);
+  const answer = useSelector((state) => state.chat.answer);
+  const dispatch = useDispatch();
 
   const handleClearChat = () => {
-    setMessages([]);
+    dispatch(setMessages([]));
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const message = event.target.message.value;
 
-    // socket.emit("userMessage", message);
-
     let botResponse = "";
     if (message === "Hello" || message === "สวัสดี") {
-      botResponse = "Good Morning";
+      botResponse = (
+        <div>
+          {answer}
+          <div className="">
+            <button className="mt-3 mb-3 bg-sky-200 text-white py-1 px-4 rounded-full text-red-500">
+             result.pdf
+            </button>
+           
+          </div>
+        </div>
+      );
     } else {
-      botResponse = "ไม่เข้าใจคำถาม";
+      botResponse = (
+        <div>
+          ไม่เข้าใจคำถามค่ะ
+          <div className="">
+          <button className="mt-3 mb-3 bg-sky-400 text-white py-1 px-4 rounded-full ">
+             retry
+            </button>
+            <button className="mt-3 mb-3 ml-3 bg-sky-400 text-white py-1 px-4 rounded-full ">
+             more
+            </button>
+          </div>
+        </div>
+      );
     }
 
     const usermessage = { content: message, isUser: true };
     const botmessage = { content: botResponse, isUser: false };
 
-    console.log("usermessage:", message,"botmessage:",botResponse)
-    
-    setMessages((prevMessages) => [...prevMessages, usermessage, botmessage]);
+    console.log("user:", message, "\nbot:", botResponse);
+
+    dispatch(setMessages([...messages, usermessage, botmessage]));
+    dispatch(setMessage(""));
+    console.log(messages);
     event.target.reset();
   };
-  useEffect(() => {
-    socket.on("botMessage", (message) => {
-      const botmessage = { content: message, isUser: false };
-      setMessages((prevMessages) => [...prevMessages, botmessage]);
-    });
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
+  const handleredirect = () => {
+    router.push("/file");
+  };
+
   return (
     <div className="">
       <Head>
@@ -58,85 +74,56 @@ export default function Chat() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex min-h-screen flex-col bg-[#f5f5f5] ">
-        {/* start : navbar */}
+      <main className="flex min-h-screen flex-col bg-[#f5f5f5] " >
+     
         <Navbar />
-        {/* end : navbar */}
-        {/* start : content */}
+
         <div className="text-right mr-5 mt-20 ">
           <div>
-            <label htmlFor="" className="btn" onClick={handleClearChat}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M16.5 4.478v.227a48.816 48.816 0 013.878.512.75.75 0 11-.256 1.478l-.209-.035-1.005 13.07a3 3 0 01-2.991 2.77H8.084a3 3 0 01-2.991-2.77L4.087 6.66l-.209.035a.75.75 0 01-.256-1.478A48.567 48.567 0 017.5 4.705v-.227c0-1.564 1.213-2.9 2.816-2.951a52.662 52.662 0 013.369 0c1.603.051 2.815 1.387 2.815 2.951zm-6.136-1.452a51.196 51.196 0 013.273 0C14.39 3.05 15 3.684 15 4.478v.113a49.488 49.488 0 00-6 0v-.113c0-.794.609-1.428 1.364-1.452zm-.355 5.945a.75.75 0 10-1.5.058l.347 9a.75.75 0 101.499-.058l-.346-9zm5.48.058a.75.75 0 10-1.498-.058l-.347 9a.75.75 0 001.5.058l.345-9z"
+            <label
+              htmlFor=""
+              className="btn bg-gray-100 "
+              onClick={handleClearChat}
+            >
+              <span>
+                <Image
+                  src="./icon/trash.svg"
+                  alt="trash"
+                  width={20}
+                  height={20}
                 />
-              </svg>
-              clear chat
+              </span>
+              <span className="text-black">clear chat</span>
             </label>
-
-            {/* The button to open modal */}
-            <label htmlFor="my_modal_6" className="btn">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="w-5 h-5"
-              >
-                <path d="M11.47 1.72a.75.75 0 011.06 0l3 3a.75.75 0 01-1.06 1.06l-1.72-1.72V7.5h-1.5V4.06L9.53 5.78a.75.75 0 01-1.06-1.06l3-3zM11.25 7.5V15a.75.75 0 001.5 0V7.5h3.75a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3 0 01-3-3v-9a3 3 0 013-3h3.75z" />
-              </svg>
-              upload file
-            </label>
-            {/* start : Modal */}
-            <input type="checkbox" id="my_modal_6" className="modal-toggle" />
-            <div className="modal">
-              <div className="modal-box">
-                <h3 className="font-bold text-lg text-left">
-                  Please Select File
-                </h3>
-                <div className="py-4 text-center">
-                  <MyComponent />
-                </div>
-                <div className="text-center">
-                  <button className="btn">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="w-5 h-5"
-                    >
-                      <path d="M11.47 1.72a.75.75 0 011.06 0l3 3a.75.75 0 01-1.06 1.06l-1.72-1.72V7.5h-1.5V4.06L9.53 5.78a.75.75 0 01-1.06-1.06l3-3zM11.25 7.5V15a.75.75 0 001.5 0V7.5h3.75a3 3 0 013 3v9a3 3 0 01-3 3h-9a3 3 0 01-3-3v-9a3 3 0 013-3h3.75z" />
-                    </svg>
-                    upload file
-                  </button>
-                </div>
-
-                <div className="modal-action">
-                  <label htmlFor="my_modal_6" className="btn">
-                    Close!
-                  </label>
-                </div>
-              </div>
+            <div onClick={handleredirect} className="btn bg-gray-100 ">
+              <span>
+                <Image
+                  src="./icon/upload.svg"
+                  alt="upload"
+                  width={20}
+                  height={20}
+                />
+              </span>
+              <span className="text-black">upload file</span>
             </div>
-            {/* end : Modal */}
           </div>
         </div>
 
-        {/* start : chat */}
         <div className="mt-5 pb-20 overflow-y-auto h-[520px] ">
           {messages.length === 0 ? (
-            <Title />
+            <Title
+              title="Chat with your data"
+              subtitle="asking anything or try an example"
+              cardfirst="What is included in my Northwind Health Plus plan that is not in standard?"
+              cardsecond="What happens in a performance review?"
+              cardthird="What does a Product Manager do?"
+            />
           ) : (
             messages.map((msg, index) => (
               <div key={index} className={msg.isUser ? "user" : "bot"}>
                 {msg.isUser ? (
                   <div className="chat chat-end">
-                    <div className="chat-bubble bg-[#D3D3D3] text-gray-700 shadow-md">
+                    <div className="chat-bubble bg-[#e8ebfa] text-gray-700 shadow-md">
                       <p className="user">
                         <span className="user-message">{msg.content}</span>
                       </p>
@@ -146,16 +133,8 @@ export default function Chat() {
                   <div className="chat chat-start">
                     <div className="chat-bubble bg-[#ffffff] text-gray-700 shadow-md">
                       <p className="bot">
-                        <span className="bot-message">Bot: {msg.content}</span>
+                        <span className="bot-message">{msg.content}</span>
                       </p>
-                      <div className="">
-                        <button className="mt-3 mb-3 bg-sky-500 text-white py-2 px-4 rounded">
-                          retry
-                        </button>
-                        <button className="mt-3 mb-3 ml-3 bg-sky-500 text-white py-2 px-4 rounded">
-                          more..
-                        </button>
-                      </div>
                     </div>
                   </div>
                 )}
@@ -163,14 +142,10 @@ export default function Chat() {
             ))
           )}
         </div>
-        {/* end : chat */}
 
-        {/* end : content */}
-
-        {/* start : inputchat */}
         <div className="btm-nav">
           <form onSubmit={handleSubmit}>
-            <div className="flex w-96 h-full">
+            <div className="flex w-full h-full md:pl-48 md:pr-48 sm:pl-20 sm:pr-20 ">
               <input
                 type="text"
                 name="message"
@@ -178,19 +153,18 @@ export default function Chat() {
                 className="w-full h-full focus:outline-none "
               />
               <button type="submit">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-6 h-6"
-                >
-                  <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
-                </svg>
+                <span>
+                  <Image
+                    src="./icon/sendmessage.svg"
+                    alt="sendmessage"
+                    width={20}
+                    height={20}
+                  />
+                </span>
               </button>
             </div>
           </form>
         </div>
-        {/* end : inputchat */}
       </main>
     </div>
   );
